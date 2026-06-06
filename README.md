@@ -105,6 +105,10 @@ output_name = Virtual-sunshine-vmon
 
 The scripts detect which physical outputs to turn off on their own, so they work the same on one monitor or several. To override that, set environment variables on the start script: `SUNSYNC_VMON_KEEP_OUTPUTS` (space- or comma-separated output names to leave on, e.g. keep one screen for a second player) or `SUNSYNC_VMON_DISABLE_OUTPUTS` (disable exactly these, skipping auto-detect).
 
+### Not on KDE? (experimental)
+
+The virtual-display path above is KDE-only because it relies on `krfb-virtualmonitor` and `capture = kwin`. For GNOME, wlroots, or any setup where you want a fixed native resolution (phones, handhelds, laptops…), there's a DE-agnostic alternative based on boot-time **EDID injection** in [`scripts/edid/`](scripts/edid/). It's experimental — the EDID setup works anywhere, the runtime display-switching is tested on KDE and best-effort elsewhere. See [`scripts/edid/README.md`](scripts/edid/README.md).
+
 ## Credentials & privacy
 
 SunSync only talks to your local Sunshine and, if you ask it to, SteamGridDB. No telemetry. Your Sunshine login is cached under `~/.config/sunshine/credentials/` with owner-only permissions; nothing is stored in a system keyring or KDE Wallet. You can point it at a remote Sunshine host, but it'll warn you first, since Sunshine's certificate is self-signed and the traffic isn't verified.
