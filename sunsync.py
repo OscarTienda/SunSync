@@ -7,7 +7,7 @@ from typing import Optional, Tuple
 try:
     __version__ = version("sunsync")
 except PackageNotFoundError:  # running from a source checkout, not installed
-    __version__ = "0.2.2"
+    __version__ = "0.2.3"
 
 from config.constants import DEFAULT_IMAGE, SOURCE_COLORS, RESET_COLOR
 from sunshine.sunshine import (

@@ -1,6 +1,6 @@
 [project]
 name = "sunsync"
-version = "0.2.2"
+version = "0.2.3"
 description = "Import games from Lutris, Steam, Heroic and other launchers into Sunshine"
 requires-python = ">=3.11"
 dependencies = [
