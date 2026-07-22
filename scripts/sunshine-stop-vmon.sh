@@ -6,6 +6,15 @@
 #
 set -u
 
+# Find the Qt D-Bus utility across distributions.
+QDBUS=""
+
+if command -v qdbus6 >/dev/null 2>&1; then
+    QDBUS=qdbus6
+elif command -v qdbus >/dev/null 2>&1; then
+    QDBUS=qdbus
+fi
+
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
 export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=${XDG_RUNTIME_DIR}/bus}"
@@ -36,7 +45,9 @@ pkill -f krfb-virtualmonitor 2>/dev/null || true
 
 # --- Release the screensaver inhibitor ----------------------------------------
 if [ -f "$STATE_DIR/ss-cookie" ]; then
-    qdbus6 org.freedesktop.ScreenSaver /ScreenSaver \
-        org.freedesktop.ScreenSaver.UnInhibit "$(cat "$STATE_DIR/ss-cookie")" 2>/dev/null || true
+    [ -n "$QDBUS" ] && "$QDBUS" \
+        org.freedesktop.ScreenSaver /ScreenSaver \
+        org.freedesktop.ScreenSaver.UnInhibit \
+        "$(cat "$STATE_DIR/ss-cookie")" 2>/dev/null || true
     rm -f "$STATE_DIR/ss-cookie"
 fi

@@ -8,9 +8,19 @@
 # you stream. The companion stop script restores everything.
 #
 # Sunshine exports SUNSHINE_CLIENT_WIDTH / _HEIGHT / _FPS into this environment.
-# Requires: krfb-virtualmonitor (krfb), kscreen-doctor (libkscreen), qdbus6.
+# Requires: krfb-virtualmonitor (krfb), kscreen-doctor (libkscreen), qdbus.
 #
 set -u
+
+# Find the Qt D-Bus utility across distributions.
+if command -v qdbus6 >/dev/null 2>&1; then
+    QDBUS=qdbus6
+elif command -v qdbus >/dev/null 2>&1; then
+    QDBUS=qdbus
+else
+    echo "Error: neither qdbus6 nor qdbus was found." >&2
+    exit 1
+fi
 
 # --- Wayland / D-Bus session environment (Sunshine's service env is minimal) --
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
@@ -40,7 +50,7 @@ PORT=5910
 # --- Keep the session awake ---------------------------------------------------
 loginctl unlock-session "${XDG_SESSION_ID:-}" 2>/dev/null \
     || loginctl unlock-sessions 2>/dev/null || true
-qdbus6 org.freedesktop.ScreenSaver /ScreenSaver \
+"$QDBUS" org.freedesktop.ScreenSaver /ScreenSaver \
     org.freedesktop.ScreenSaver.Inhibit "Sunshine" "Game streaming" \
     > "$STATE_DIR/ss-cookie" 2>/dev/null || true
 
@@ -108,4 +118,4 @@ for out in $CANDIDATE_OUTPUTS; do
 done
 
 sleep 0.5
-qdbus6 org.kde.KWin /KWin org.kde.KWin.minimizeAll 2>/dev/null || true
+"$QDBUS" org.kde.KWin /KWin org.kde.KWin.minimizeAll 2>/dev/null || true
